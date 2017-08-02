@@ -23,7 +23,9 @@ hs_err_pid*
 
 # idea #
 *.iml
+.idea/
 
 # filepath #
 target/
 ehcache/
+.mvn/
