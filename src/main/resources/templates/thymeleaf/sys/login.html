@@ -1,0 +1,74 @@
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<head>
+    <title>后台管理登录</title>
+    <link th:href="@{/static/h-ui.admin/css/H-ui.login.css}" rel="stylesheet" type="text/css" />
+</head>
+<body>
+    <section layout:fragment="content">
+        <div class="header"></div>
+        <div class="loginWraper">
+            <div class="loginBox">
+                <form id="loginForm" class="form form-horizontal" th:action="@{/login}" method="post">
+                    <div th:if="${message}" id="messageBox" class="Huialert Huialert-info">
+                        <i class="Hui-iconfont Hui-iconfont-close"></i><label th:text="${message}"></label>
+                    </div>
+                    <div class="row cl">
+                        <label class="form-label col-xs-3"><i class="Hui-iconfont Hui-iconfont-user2"></i></label>
+                        <div class="formControls col-xs-8">
+                            <input id="username" name="username" type="text" placeholder="账户" class="input-text radius size-L">
+                        </div>
+                    </div>
+                    <div class="row cl">
+                        <label class="form-label col-xs-3"><i class="Hui-iconfont Hui-iconfont-suoding"></i></label>
+                        <div class="formControls col-xs-8">
+                            <input id="password" name="password" type="password" placeholder="密码" class="input-text radius size-L">
+                        </div>
+                    </div>
+                    <div class="row cl">
+                        <div class="formControls col-xs-8 col-xs-offset-3">
+                            <input id="validateCode" name="validateCode" class="input-text radius size-L" type="text" maxlength="4" placeholder="验证码"
+                                   onblur="if(this.value==''){this.value='验证码:'}" onclick="if(this.value=='验证码:'){this.value='';}" value="验证码:" style="width:150px;">
+                            <img id="validateCodeImg" th:src="@{/validateCodeServlet}"> <a id="kanbuq" href="javascript:;">看不清，换一张</a> </div>
+                    </div>
+                    <div class="row cl">
+                        <div class="formControls col-xs-8 col-xs-offset-3">
+                            <label th:for="online">
+                                <input type="checkbox" name="rememberMe" id="rememberMe">
+                                使我保持登录状态</label>
+                        </div>
+                    </div>
+                    <div class="row cl">
+                        <div class="formControls col-xs-8 col-xs-offset-3">
+                            <input name="" type="submit" class="btn btn-success radius size-L"
+                                   value="&nbsp;登&nbsp;&nbsp;&nbsp;&nbsp;录&nbsp;">
+                            <input name="" type="reset" class="btn btn-default radius size-L"
+                                   value="&nbsp;取&nbsp;&nbsp;&nbsp;&nbsp;消&nbsp;">
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="footer">Copyright baozi_admin by H-ui.admin v3.0</div>
+    </section>
+
+    <section layout:fragment="custom_js">
+        <script type="text/javascript" th:src="@{/static/lib/rsa/jsbn.js}"></script>
+        <script type="text/javascript" th:src="@{/static/lib/rsa/prng4.js}"></script>
+        <script type="text/javascript" th:src="@{/static/lib/rsa/rng.js}"></script>
+        <script type="text/javascript" th:src="@{/static/lib/rsa/rsa.js}"></script>
+        <script type="text/javascript" th:src="@{/static/lib/rsa/base64.js}"></script>
+        <script type="text/javascript" th:src="@{/static/lib/common/login.js}"></script>
+        <script type="text/javascript" th:inline="javascript">
+            $(function(){
+                $('#username').focus();
+                Login.init();
+
+                $('#kanbuq').click(function(){
+                    $('#validateCodeImg').attr('src', '/validateCodeServlet?_t=' + Math.random());
+                });
+            });
+        </script>
+    </section>
+</body>
+</html>

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.baozi.admin.modules.sys.dao.RoleDao">
+
+    <sql id="beanColumns">
+        a.id,
+        a.name,
+        a.useable,
+        a.create_by AS "createBy.id",
+        FROM_UNIXTIME(a.create_date, '%Y-%m-%d %H:%i:%s') AS "createDate",
+        a.update_by AS "updateBy.id",
+        FROM_UNIXTIME(a.update_date, '%Y-%m-%d %H:%i:%s') AS "updateDate",
+        a.remarks
+    </sql>
+
+    <select id="get" resultType="com.baozi.admin.modules.sys.entity.Role">
+        SELECT <include refid="beanColumns"/> FROM sys_role a WHERE a.id = #{id} limit 1
+    </select>
+
+    <select id="getByEntity" resultType="com.baozi.admin.modules.sys.entity.Role">
+        SELECT <include refid="beanColumns"/> FROM sys_role a
+        <where>
+            <if test="name != null and name != ''">
+                a.name = #{name}
+            </if>
+        </where>
+        limit 1
+    </select>
+
+    <select id="findList" resultType="com.baozi.admin.modules.sys.entity.Role">
+        SELECT <include refid="beanColumns"/>
+        FROM sys_role a
+        LEFT JOIN sys_user_role ur ON ur.role_id = a.id
+        LEFT JOIN sys_user u ON u.id = ur.user_id
+        <where>
+            a.useable = #{useable}
+            <if test="user != null and user.id != null and user.id != ''">
+                AND u.id = #{user.id}
+            </if>
+            <if test="user != null and user.loginName != null and user.loginName != ''">
+                AND u.login_name = #{user.loginName}
+            </if>
+        </where>
+    </select>
+
+    <insert id="insert">
+        INSERT INTO sys_role
+        (id, name, useable, create_by, create_date, update_by, update_date, remarks)
+        VALUES
+        (#{id}, #{name}, #{useable},
+        #{createBy.id}, UNIX_TIMESTAMP(#{createDate}), #{updateBy.id}, UNIX_TIMESTAMP(#{updateDate}), #{remarks})
+    </insert>
+
+    <update id="update">
+        UPDATE sys_role SET
+        name = #{name},
+        useable = #{useable},
+        update_by = #{updateBy.id},
+        update_date = UNIX_TIMESTAMP(#{updateDate}),
+        remarks = #{remarks}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM sys_role WHERE id = #{id}
+    </delete>
+
+    <select id="findListByUserId" parameterType="String" resultType="com.baozi.admin.modules.sys.entity.Role">
+        SELECT <include refid="beanColumns"/> FROM sys_role a
+        JOIN sys_user_role b ON a.id = b.role_id
+    </select>
+
+    <delete id="deleteRoleMenu">
+        DELETE FROM sys_role_menu WHERE role_id = #{id}
+    </delete>
+
+    <insert id="insertRoleMenu">
+        INSERT INTO sys_role_menu(role_id, menu_id)
+        <foreach collection="menuList" item="menu" separator=" union all ">
+            SELECT #{id}, #{menu.id} FROM dual
+        </foreach>
+    </insert>
+
+    <select id="findMenuIdList" resultType="String">
+        SELECT menu_id FROM sys_role_menu WHERE role_id = #{id}
+    </select>
+</mapper>

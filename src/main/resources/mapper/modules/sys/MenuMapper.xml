@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.baozi.admin.modules.sys.dao.MenuDao">
+
+    <sql id="beanColumns">
+        a.id,
+        a.parent_id,
+        a.parent_ids,
+        a.name,
+        a.sort,
+        a.href,
+        a.icon,
+        a.is_show,
+        a.permission,
+        a.create_by AS "createBy.id",
+        FROM_UNIXTIME(a.create_date, '%Y-%m-%d %H:%i:%s') AS "createDate",
+        a.update_by AS "updateBy.id",
+        FROM_UNIXTIME(a.update_date, '%Y-%m-%d %H:%i:%s') AS "updateDate",
+        a.remarks,
+        a.parent_id AS "parent.id",
+        p.name AS "parent.name",
+        p.parent_id AS "parent.parentId"
+    </sql>
+
+    <sql id="beanJoins">
+        LEFT JOIN sys_menu p ON p.id = a.parent_id
+    </sql>
+
+    <select id="get" resultType="com.baozi.admin.modules.sys.entity.Menu">
+        SELECT <include refid="beanColumns"/> FROM sys_menu a <include refid="beanJoins"/>
+        WHERE a.id = #{id} limit 1
+    </select>
+
+    <select id="findList" resultType="com.baozi.admin.modules.sys.entity.Menu">
+        SELECT <include refid="beanColumns"/>
+        FROM sys_menu a <include refid="beanJoins"/>
+        <where>
+            <if test="parent != null and parent.id != null and parent.id != ''">
+                p.parent_id = #{parentId}
+            </if>
+        </where>
+        ORDER BY a.sort
+    </select>
+
+    <insert id="insert">
+        INSERT INTO sys_menu
+        (id, parent_id, parent_ids, name, sort, href, icon, is_show, permission, create_by, create_date, update_by, update_date, remarks)
+        VALUES
+        (#{id}, #{parent.id}, #{parentIds}, #{name}, #{sort}, #{href}, #{icon}, #{isShow}, #{permission},
+        #{createBy.id}, UNIX_TIMESTAMP(#{createDate}), #{updateBy.id}, UNIX_TIMESTAMP(#{updateDate}), #{remarks})
+    </insert>
+
+    <update id="update">
+        UPDATE sys_menu SET
+        parent_id = #{parentId},
+        parent_ids = #{parentIds},
+        name = #{name},
+        sort = #{sort},
+        href = #{href},
+        icon = #{icon},
+        is_show = #{isShow},
+        permission = #{permission},
+        update_by = #{updateBy.id},
+        update_date = UNIX_TIMESTAMP(#{updateDate}),
+        remarks = #{remarks}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM sys_menu a WHERE a.id = #{id} OR a.parent_ids LIKE CONCAT('%',#{id},'%')
+    </delete>
+
+    <select id="findListByRoleId" parameterType="String" resultType="com.baozi.admin.modules.sys.entity.Menu">
+        SELECT <include refid="beanColumns"/> FROM sys_menu a <include refid="beanJoins"/>
+        JOIN sys_role_menu b ON a.id = b.menu_id
+    </select>
+
+    <select id="findByUserId" resultType="com.baozi.admin.modules.sys.entity.Menu">
+        SELECT DISTINCT <include refid="beanColumns"/> FROM sys_menu a
+        <include refid="beanJoins"/>
+        JOIN sys_role_menu rm ON rm.menu_id = a.id
+        JOIN sys_role r ON r.id = rm.role_id AND r.useable = '1'
+        JOIN sys_user_role ur ON ur.role_id = r.id
+        JOIN sys_user u ON u.id = ur.user_id AND u.id = #{userId}
+        ORDER BY a.sort
+    </select>
+
+    <select id="findByParentIdsLike" resultType="com.baozi.admin.modules.sys.entity.Menu">
+        SELECT
+        a.id,
+        a.parent_id AS "parent.id",
+        a.parent_ids
+        FROM sys_menu a
+        WHERE a.parent_ids LIKE #{parentIds}
+        ORDER BY a.sort
+    </select>
+
+    <update id="updateParentIds">
+        UPDATE sys_menu SET parent_id = #{parent.id}, parent_ids = #{parentIds} WHERE id = #{id}
+    </update>
+
+    <update id="updateSort">
+        UPDATE sys_menu SET sort = #{sort} WHERE id = #{id}
+    </update>
+</mapper>

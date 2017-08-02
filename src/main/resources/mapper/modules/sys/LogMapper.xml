@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.baozi.admin.modules.sys.dao.LogDao">
+
+    <sql id="beanColumns">
+        a.id,
+        a.title,
+        a.params,
+        a.exception,
+        a.request_uri,
+        a.method,
+        a.user_agent,
+        a.remote_addr,
+        a.create_by AS "createBy.id",
+        FROM_UNIXTIME(a.create_date, '%Y-%m-%d %H:%i:%s') AS "createDate"
+    </sql>
+
+    <select id="get" resultType="com.baozi.admin.modules.sys.entity.Log">
+        SELECT <include refid="beanColumns"/>, su.name AS "createBy.name"
+        FROM sys_log a
+        JOIN sys_user su on a.create_by = su.id
+        WHERE a.id = #{id} limit 1
+    </select>
+
+    <select id="getByEntity" resultType="com.baozi.admin.modules.sys.entity.Log">
+        SELECT <include refid="beanColumns"/> FROM sys_log a
+    </select>
+
+    <select id="findList" resultType="com.baozi.admin.modules.sys.entity.Log">
+        SELECT <include refid="beanColumns"/>, su.name AS "createBy.name"
+        FROM sys_log a
+        JOIN sys_user su on a.create_by = su.id
+        <where>
+            <if test="beginDate != null and endDate != null and beginDate != '' and endDate != ''">
+                (a.create_date BETWEEN UNIX_TIMESTAMP(#{beginDate}) AND UNIX_TIMESTAMP(#{endDate}))
+            </if>
+            <if test="title != null and title != ''">
+                AND a.title LIKE CONCAT('%', #{title}, '%')
+            </if>
+            <if test="createBy != null and createBy.name != null and createBy.name != ''">
+                AND su.name = #{createBy.name}
+            </if>
+        </where>
+        ORDER BY a.create_date DESC
+    </select>
+
+    <insert id="insert">
+        INSERT INTO sys_log
+        (id, title, params, exception, request_uri, method, user_agent, remote_addr, create_by, create_date)
+        VALUES
+        (#{id}, #{title}, #{params}, #{exception}, #{requestUri}, #{method}, #{userAgent}, #{remoteAddr}, #{createBy.id}, UNIX_TIMESTAMP(#{createDate}))
+    </insert>
+
+    <update id="update">
+        UPDATE sys_log SET
+            title = #{title},
+            params = #{params},
+            exception = #{exception},
+            request_uri = #{request_uri},
+            method = #{method},
+            user_agent = #{userAgemt},
+            remote_addr = #{remoteAddr}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM sys_log WHERE id = #{id}
+    </delete>
+
+    <delete id="deleteIds" parameterType="java.util.List">
+        DELETE FROM sys_log WHERE id IN
+        <foreach collection="list" open="(" close=")" separator="," item="item">
+            #{item}
+        </foreach>
+    </delete>
+</mapper>

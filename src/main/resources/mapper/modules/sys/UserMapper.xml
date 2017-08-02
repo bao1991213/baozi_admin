@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.baozi.admin.modules.sys.dao.UserDao">
+
+    <sql id="beanColumns">
+        a.id,
+        a.no,
+        a.login_name,
+        a.name,
+        a.password,
+        a.login_ip,
+        FROM_UNIXTIME(a.login_date, '%Y-%m-%d %H:%i:%s') AS "loginDate",
+        a.login_flag,
+        a.page,
+        a.create_by AS "createBy.id",
+        FROM_UNIXTIME(a.create_date, '%Y-%m-%d %H:%i:%s') AS "createDate",
+        a.update_by AS "updateBy.id",
+        FROM_UNIXTIME(a.update_date, '%Y-%m-%d %H:%i:%s') AS "updateDate",
+        a.remarks
+    </sql>
+
+    <select id="get" resultType="com.baozi.admin.modules.sys.entity.User">
+        SELECT <include refid="beanColumns"/> FROM sys_user a WHERE a.id = #{id} limit 1
+    </select>
+
+    <select id="getByEntity" resultType="com.baozi.admin.modules.sys.entity.User">
+        SELECT <include refid="beanColumns"/> FROM sys_user a
+        <where>
+            <if test="id != null and id != ''">
+                a.id = #{id}
+            </if>
+            <if test="no != null and no != ''">
+                AND a.no = #{no}
+            </if>
+            <if test="loginName != null and loginName != ''">
+                AND a.login_name = #{loginName}
+            </if>
+            <if test="name != null and name != ''">
+                AND a.name = #{name}
+            </if>
+        </where>
+    </select>
+
+    <select id="findList" resultType="com.baozi.admin.modules.sys.entity.User">
+        SELECT <include refid="beanColumns"/>
+        FROM sys_user a
+        <where>
+            <if test="name != null and name != ''">
+                (a.login_name LIKE CONCAT('%', #{name}, '%') OR a.name LIKE CONCAT('%', #{name}, '%'))
+            </if>
+            <if test="beginDate != null and endDate != null and beginDate != '' and endDate != ''">
+                AND (a.login_date BETWEEN UNIX_TIMESTAMP(#{beginDate}) AND UNIX_TIMESTAMP(#{endDate}))
+            </if>
+        </where>
+    </select>
+
+    <insert id="insert">
+        INSERT INTO sys_user
+        (id, login_name, password, no, name, login_ip, login_date, login_flag, page, create_by, create_date, update_by, update_date, remarks)
+        VALUES
+        (#{id}, #{loginName}, #{password}, #{no}, #{name}, #{loginIp}, UNIX_TIMESTAMP(#{loginDate}), #{loginFlag}, #{page},
+        #{createBy.id}, UNIX_TIMESTAMP(#{createDate}), #{updateBy.id}, UNIX_TIMESTAMP(#{updateDate}), #{remarks})
+    </insert>
+
+    <update id="update">
+        UPDATE sys_user SET
+            <if test="password != null and password != ''">
+                password = #{password},
+            </if>
+            login_name = #{loginName},
+            no = #{no},
+            name = #{name},
+            login_ip = #{loginIp},
+            login_date = UNIX_TIMESTAMP(#{loginDate}),
+            login_flag = #{loginFlag},
+            page = #{page},
+            update_by = #{updateBy.id},
+            update_date = UNIX_TIMESTAMP(#{updateDate}),
+            remarks = #{remarks}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM sys_user WHERE id = #{id}
+    </delete>
+
+    <delete id="deleteIds" parameterType="java.util.List">
+        DELETE FROM sys_user WHERE id IN
+        <foreach collection="list" open="(" close=")" separator="," item="item">
+            #{item}
+        </foreach>
+    </delete>
+
+    <select id="getByLoginName" parameterType="String" resultType="com.baozi.admin.modules.sys.entity.User">
+        SELECT <include refid="beanColumns"/> FROM sys_user a WHERE a.login_name = #{loginName}
+    </select>
+
+    <update id="updatePasswordById">
+        UPDATE sys_user SET password = #{password} WHERE id = #{id}
+    </update>
+
+    <delete id="deleteUserRole">
+        DELETE FROM sys_user_role WHERE user_id = #{id}
+    </delete>
+
+    <delete id="deleteUserRoleIds" parameterType="java.util.List">
+        DELETE FROM sys_user_role WHERE user_id IN
+        <foreach collection="list" open="(" close=")" separator="," item="item">
+            #{item}
+        </foreach>
+    </delete>
+
+    <update id="updateStatus">
+        UPDATE sys_user SET login_flag = #{loginFlag} WHERE id = #{id}
+    </update>
+
+    <update id="updateUserLoginInfo">
+        UPDATE sys_user SET login_ip = #{loginIp}, login_date = UNIX_TIMESTAMP(#{loginDate}) WHERE id = #{id}
+    </update>
+
+    <insert id="insertUserRole" parameterType="java.util.List">
+        INSERT INTO sys_user_role(user_id, role_id)
+        <foreach collection="roleList" item="role" separator=" union all ">
+            SELECT #{id}, #{role.id} FROM dual
+        </foreach>
+    </insert>
+
+</mapper>

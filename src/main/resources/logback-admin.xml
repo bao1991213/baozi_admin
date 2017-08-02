@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <!-- 默认使用spring boot底层的logback配置 -->
+    <include resource="org/springframework/boot/logging/logback/base.xml" />
+
+    <!-- 测试环境+开发环境. 多个使用逗号隔开. -->
+    <springProfile name="test,dev">
+        <logger name="org.springframework.web" level="DEBUG"/>
+        <logger name="com.baozi.admin" level="DEBUG" />
+    </springProfile>
+
+    <!-- 生产环境. -->
+    <springProfile name="prod">
+        <logger name="org.springframework.web" level="ERROR"/>
+        <logger name="com.baozi.admin" level="ERROR" />
+    </springProfile>
+
+</configuration>
