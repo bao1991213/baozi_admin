@@ -78,7 +78,7 @@
     </delete>
 
     <select id="findDescriptionList" resultType="com.baozi.admin.modules.sys.entity.Dict">
-        SELECT a.description, a.type FROM sys_dict a GROUP BY a.type
+        SELECT max(a.description) as description, a.type FROM sys_dict a GROUP BY a.type
     </select>
 
     <update id="updateSort">
