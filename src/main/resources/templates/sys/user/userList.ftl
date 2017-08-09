@@ -9,10 +9,10 @@
     <form id="searchForm" class="form form-horizontal" action="${request.contextPath}/sys/user">
         <input id="pageNum" name="pageNum" type="hidden" value="${pageInfo.pageNum}">
         <div class="text-c"> 日期范围：
-            <input type="text" onfocus="WdatePicker({ maxDate:'#F{$dp.$D(\'datemax\')||\'%y-%M-%d\'}' })" id="datemin"
+            <input type="text" onfocus="WdatePicker({ maxDate:'#F{$dp.$D(\'datemax\')||\'%y-%M-%d\'}',maxDate:'%y-%M-%d' })" id="datemin"
                    class="input-text radius size-M Wdate" style="width:120px;" id="beginDate" name="beginDate" value="${user.beginDate?default('')}">
             -
-            <input type="text" onfocus="WdatePicker({ minDate:'#F{$dp.$D(\'datemin\')}',maxDate:'%y-%M-%d' })" id="datemax"
+            <input type="text" onfocus="WdatePicker({ minDate:'#F{$dp.$D(\'datemin\')}',maxDate:'%y-%M-{%d+1}' })" id="datemax"
                    class="input-text radius size-M Wdate" style="width:120px;" id="endDate" name="endDate" value="${user.endDate?default('')}">
             <input type="text" class="input-text radius size-M" style="width:250px" placeholder="输入用户名 登录名" id="name" name="name" value="${user.name?default('')}">
             <button type="submit" class="btn btn-success radius"><i class="Hui-iconfont Hui-iconfont-search2"></i> 搜索</button>

@@ -9,10 +9,10 @@
     <form id="searchForm" class="form form-horizontal" action="${request.contextPath}/sys/log">
         <input id="pageNum" name="pageNum" type="hidden" value="${pageInfo.pageNum}">
         <div class="text-c"> 日期范围：
-            <input type="text" onfocus="WdatePicker({ maxDate:'#F{$dp.$D(\'datemax\')||\'%y-%M-%d\'}' })" id="datemin"
+            <input type="text" onfocus="WdatePicker({ maxDate:'#F{$dp.$D(\'datemax\')||\'%y-%M-%d\'}',maxDate:'%y-%M-%d' })" id="datemin"
                    class="input-text radius size-M Wdate" style="width:120px;" id="beginDate" name="beginDate" value="${log.beginDate?default('')}">
             -
-            <input type="text" onfocus="WdatePicker({ minDate:'#F{$dp.$D(\'datemin\')}',maxDate:'%y-%M-%d' })" id="datemax"
+            <input type="text" onfocus="WdatePicker({ minDate:'#F{$dp.$D(\'datemin\')}',maxDate:'%y-%M-{%d+1}' })" id="datemax"
                    class="input-text radius size-M Wdate" style="width:120px;" id="endDate" name="endDate" value="${log.endDate?default('')}">
             <input type="text" class="input-text radius size-M" style="width:150px" placeholder="输入操作菜单" id="title" name="title" value="${log.title?default('')}">
             <input type="text" class="input-text radius size-M" style="width:150px" placeholder="输入操作用户" id="createBy.name" name="createBy.name" value="<#if log.createBy??>${log.createBy.name?default('')}</#if>">
@@ -74,12 +74,13 @@
                     success: function(data){
                         layer.open({title: '提示', content: data.m, time: 2000, end: function(){
                             if (data.c == 1) {
-                                $('#dataTable').find('tbody tr').each(function(){
-                                    if ($(this).find('td').find('input').is(':checked')) {
-                                        $(this).remove();
-                                    }
-                                });
-                                layer_close();
+                                window.location.reload();
+//                                $('#dataTable').find('tbody tr').each(function(){
+//                                    if ($(this).find('td').find('input').is(':checked')) {
+//                                        $(this).remove();
+//                                    }
+//                                });
+//                                layer_close();
                             }
                         }});
                     },
