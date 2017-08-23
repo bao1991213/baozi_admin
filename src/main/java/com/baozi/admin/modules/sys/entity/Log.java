@@ -30,6 +30,10 @@ public class Log extends BaseEntity<Log>  {
         return params;
     }
 
+    public void setParams(String params) {
+        this.params = params;
+    }
+
     public void setParams(Map<String, String[]> paramMap) {
         if (paramMap == null){
             return;

@@ -71,7 +71,7 @@ public class User extends BaseEntity<User> {
     }
 
     @NotNull(message = "用户名不能为空")
-    @Length(min = 6, max = 16, message = "用户名长度在6-16之间")
+    @Length(min = 4, max = 16, message = "用户名长度在4-16之间")
     public String getName() {
         return name;
     }

@@ -43,7 +43,7 @@
             rules:{
                 no:{required:true, minlength:4, maxlength:4},
                 loginName:{required:true, minlength:6, maxlength:16},
-                name:{required:true, minlength:6, maxlength:16},
+                name:{required:true, minlength:4, maxlength:16},
                 page:{required:true}
             },
             onkeyup:false,

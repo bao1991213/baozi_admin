@@ -54,6 +54,11 @@
     <script type="text/javascript" src="/static/lib/rsa/base64.js"></script>
     <script type="text/javascript" src="/static/lib/common/login.js"></script>
     <script>
+        window.onload = function () {
+            if (window.parent.window != window) {
+                window.top.location = "/login";
+            }
+        }
         $(function(){
             $('#username').focus();
             Login.init('${request.contextPath}');
