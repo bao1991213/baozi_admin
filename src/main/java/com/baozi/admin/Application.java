@@ -16,40 +16,40 @@ import org.springframework.http.HttpStatus;
 
 // 打包成war,放置tomcat内方式
 
-//@SpringBootApplication
-//@EnableAutoConfiguration
-//@EnableCaching
-//public class Application extends SpringBootServletInitializer {
-//
-//	@Override
-//	protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
-//		return application.sources(Application.class);
-//	}
-//
-//
-//	@Bean
-//	public ServletRegistrationBean servletRegistrationBean() {
-//		return new ServletRegistrationBean(new ValidateCodeServlet(), "/validateCodeServlet");
-//	}
-//
-//	@Bean
-//	public EmbeddedServletContainerCustomizer containerCustomizer() {
-//		return new EmbeddedServletContainerCustomizer() {
-//			@Override
-//			public void customize(ConfigurableEmbeddedServletContainer configurableEmbeddedServletContainer) {
-//				configurableEmbeddedServletContainer.addErrorPages(new ErrorPage(HttpStatus.FORBIDDEN, "/error/403"));
-//				configurableEmbeddedServletContainer.addErrorPages(new ErrorPage(HttpStatus.NOT_FOUND, "/error/404"));
-//				configurableEmbeddedServletContainer.addErrorPages(new ErrorPage(HttpStatus.INTERNAL_SERVER_ERROR, "/error/500"));
-//				configurableEmbeddedServletContainer.addErrorPages(new ErrorPage(Throwable.class, "/error/500"));
-//			}
-//		};
-//	}
-//
-//	public static void main(String[] args) {
-//		SpringApplication.run(Application.class, args);
-//	}
-//
-//}
+@SpringBootApplication
+@EnableAutoConfiguration
+@EnableCaching
+public class Application extends SpringBootServletInitializer {
+
+	@Override
+	protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
+		return application.sources(Application.class);
+	}
+
+
+	@Bean
+	public ServletRegistrationBean servletRegistrationBean() {
+		return new ServletRegistrationBean(new ValidateCodeServlet(), "/validateCodeServlet");
+	}
+
+	@Bean
+	public EmbeddedServletContainerCustomizer containerCustomizer() {
+		return new EmbeddedServletContainerCustomizer() {
+			@Override
+			public void customize(ConfigurableEmbeddedServletContainer configurableEmbeddedServletContainer) {
+				configurableEmbeddedServletContainer.addErrorPages(new ErrorPage(HttpStatus.FORBIDDEN, "/error/403"));
+				configurableEmbeddedServletContainer.addErrorPages(new ErrorPage(HttpStatus.NOT_FOUND, "/error/404"));
+				configurableEmbeddedServletContainer.addErrorPages(new ErrorPage(HttpStatus.INTERNAL_SERVER_ERROR, "/error/500"));
+				configurableEmbeddedServletContainer.addErrorPages(new ErrorPage(Throwable.class, "/error/500"));
+			}
+		};
+	}
+
+	public static void main(String[] args) {
+		SpringApplication.run(Application.class, args);
+	}
+
+}
 
 // 标准jar执行方式
 //@SpringBootApplication

@@ -42,7 +42,7 @@ public class RoleController extends BaseController {
     @RequiresPermissions("sys:role:view")
     @RequestMapping({"", "list"})
     public String list(ModelMap modelMap) {
-        List<Role> roleList = UserUtils.getRoleList(null);
+        List<Role> roleList = UserUtils.getRoleList(UserUtils.getUser());
         modelMap.addAttribute("roleList", roleList);
         return "sys/role/roleList";
     }
