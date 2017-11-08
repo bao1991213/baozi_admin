@@ -395,7 +395,8 @@
             $('.Hui-iconfont').dblclick(function(){
                 parent.$('#icon').val($(this).attr('data-value'));
                 parent.$('#icon').prev().html($(this).attr('data-value') + ' ' + $(this).attr('data-name'));
-                parent.$('#icon').prev().prev().addClass($(this).attr('data-value'));
+                parent.$('#icon').prev().prev().removeClass();
+                parent.$('#icon').prev().prev().addClass('Hui-iconfont' + $(this).attr('data-value'));
                 layer_close();
             });
         });
